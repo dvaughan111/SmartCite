@@ -1,27 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartCite</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    }
+    
+    body {
+      width: 350px;
+      min-height: 200px;
+      padding: 20px;
+      background: #ffffff;
+    }
+    
+    .header {
+      margin-bottom: 15px;
+    }
+    
+    .header h1 {
+      font-size: 18px;
+      color: #2563EB;
+      margin-bottom: 5px;
+    }
+    
+    .header p {
+      font-size: 13px;
+      color: #6B7280;
+    }
+    
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #D1D5DB;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+    }
+    
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #10B981;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 15px;
+    }
+    
+    button:hover {
+      background: #059669;
+    }
+    
+    button:disabled {
+      background: #9CA3AF;
+      cursor: not-allowed;
+    }
+    
+    #result {
+      padding: 15px;
+      background: #F9FAFB;
+      border-radius: 8px;
+      border: 1px solid #E5E7EB;
+      min-height: 60px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    
+    .loading {
+      color: #6B7280;
+      font-style: italic;
+    }
+    
+    .error {
+      color: #DC2626;
+    }
+    
+    .success {
+      color: #059669;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    textarea {
+      width: 100%;
+      height: 80px;
+      padding: 10px;
+      border: 1px solid #D1D5DB;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      margin: 10px 0;
+      resize: vertical;
+    }
+    
+    .copy-btn {
+      background: #3B82F6;
+      font-size: 14px;
+      padding: 8px;
+    }
+    
+    .copy-btn:hover {
+      background: #2563EB;
+    }
+    
+    .footer {
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid #E5E7EB;
+      font-size: 12px;
+      color: #6B7280;
+      text-align: center;
+    }
+    
+    .upgrade-link {
+      color: #10B981;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .upgrade-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
 <body>
-  <h3>SmartCite</h3>
-  <p style="font-size: 14px; color: #4b5563; margin-bottom: 15px;">Generate citations from any webpage</p>
+  <div class="header">
+    <h1>SmartCite</h1>
+    <p>Generate citations from any webpage</p>
+  </div>
   
-  <select class="format-select" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #d1d5db;">
+  <select id="formatSelect">
     <option value="apa">APA Style</option>
     <option value="mla">MLA Style</option>
     <option value="chicago">Chicago Style</option>
   </select>
   
-  <button id="citeButton" style="width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; margin-bottom: 15px;">
-    📚 Generate Citation
-  </button>
+  <button id="citeButton">📚 Generate Citation</button>
   
-  <div id="result" style="margin-top: 15px; padding: 10px; background: #f9f9f9; border-radius: 6px; border: 1px solid #eee; min-height: 50px;">
+  <div id="result">
     <!-- Results will appear here -->
   </div>
   
-  <div style="font-size: 12px; color: #6b7280; margin-top: 15px; text-align: center; padding: 8px; background: #f3f4f6; border-radius: 6px;">
-    Free uses today: <span id="count">0</span>/5
+  <div class="footer">
+    <div>Free uses today: <span id="count">0</span>/5</div>
     <div style="margin-top: 5px;">
-      <a href="#" id="upgradeLink" style="color: #10b981; text-decoration: none; font-weight: 600;">✨ Upgrade to Premium</a>
+      <a href="#" id="upgradeLink" class="upgrade-link">✨ Upgrade to Premium</a>
     </div>
   </div>
 
   <script src="popup.js"></script>
 </body>
+</html>
