@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Show citation
         resultDiv.innerHTML = `
-          <div class="success">✓ Citation generated successfully</div>
+          <div class="success">✓ Citation generated</div>
           <textarea id="citationText" readonly>${response.citation}</textarea>
           <button class="copy-btn" id="copyButton">📋 Copy to Clipboard</button>
         `;
@@ -105,22 +105,24 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   // Upgrade link handler
-  upgradeLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    resultDiv.innerHTML = `
-      <div style="text-align: center;">
-        <div style="font-weight: bold; color: #2563EB; margin-bottom: 10px;">✨ Premium Features</div>
-        <div style="text-align: left; font-size: 13px;">
-          <div>• Unlimited citations</div>
-          <div>• 9,000+ citation styles</div>
-          <div>• Team collaboration</div>
-          <div>• AI-powered suggestions</div>
+  if (upgradeLink) {
+    upgradeLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      resultDiv.innerHTML = `
+        <div style="text-align: center;">
+          <div style="font-weight: bold; color: #2563EB; margin-bottom: 10px;">✨ Premium Features</div>
+          <div style="text-align: left; font-size: 13px;">
+            <div>• Unlimited citations</div>
+            <div>• 9,000+ citation styles</div>
+            <div>• Team collaboration</div>
+            <div>• AI-powered suggestions</div>
+          </div>
+          <div style="margin-top: 15px; font-size: 12px;">
+            Coming soon!<br>
+            <small>Join waitlist for early access</small>
+          </div>
         </div>
-        <div style="margin-top: 15px; font-size: 12px;">
-          Coming soon!<br>
-          <small>Join waitlist for early access</small>
-        </div>
-      </div>
-    `;
-  });
+      `;
+    });
+  }
 });
