@@ -1,38 +1,627 @@
-{
-  "manifest_version": 3,
-  "name": "SmartCite - Academic Citation Generator",
-  "version": "2.0.0",
-  "version_name": "2.0.0 production",
-  "description": "One-click citations from webpages, PDFs, and videos. Supports APA, MLA, Chicago, and more citation styles.",
-  
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
-  
-  "action": {
-    "default_popup": "popup.html",
-    "default_title": "Generate Citation",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartCite - Citation Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
     }
-  },
-  
-  "permissions": [
-    "activeTab",
-    "storage",
-    "scripting"
-  ],
-  
-  "optional_host_permissions": [
-    "*://*/*"
-  ],
-  
-  "host_permissions": [
-    "https://doi.org/*",
-    "https://api.crossref.org/*"
-  ]
-}
+    
+    body {
+      width: 450px;
+      padding: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      margin: 10px;
+      min-height: 550px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #f0f2f5;
+      position: relative;
+    }
+    
+    .header:after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 25%;
+      width: 50%;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+    
+    .header h1 {
+      font-size: 26px;
+      color: #2d3748;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .header h1 .logo {
+      color: #667eea;
+      font-size: 32px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .header p {
+      color: #718096;
+      font-size: 14px;
+      line-height: 1.6;
+      max-width: 350px;
+      margin: 0 auto;
+    }
+    
+    .permission-note {
+      background: linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%);
+      border: 2px solid #81e6d9;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #234e52;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .permission-note:before {
+      content: '🔒';
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      opacity: 0.2;
+    }
+    
+    .permission-note strong {
+      color: #285e61;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .permission-note strong:before {
+      content: '✓';
+      color: #38b2ac;
+      font-weight: bold;
+    }
+    
+    .features {
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 28px;
+      border: 2px solid #e2e8f0;
+    }
+    
+    .features h3 {
+      color: #4a5568;
+      margin-bottom: 16px;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .features h3:before {
+      content: '✨';
+      font-size: 20px;
+    }
+    
+    .features ul {
+      list-style: none;
+    }
+    
+    .features li {
+      padding: 10px 0;
+      color: #718096;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      border-bottom: 1px solid #edf2f7;
+      transition: all 0.2s;
+    }
+    
+    .features li:last-child {
+      border-bottom: none;
+    }
+    
+    .features li:hover {
+      color: #4a5568;
+      transform: translateX(5px);
+    }
+    
+    .features li:before {
+      content: "✓";
+      color: #48bb78;
+      font-weight: bold;
+      font-size: 16px;
+      min-width: 20px;
+    }
+    
+    .citation-form {
+      margin-bottom: 28px;
+    }
+    
+    .citation-form label {
+      display: block;
+      color: #4a5568;
+      margin-bottom: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .citation-form label:before {
+      content: '📝';
+      font-size: 18px;
+    }
+    
+    select {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 15px;
+      background: white;
+      color: #2d3748;
+      margin-bottom: 24px;
+      transition: all 0.3s;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 20px;
+      padding-right: 50px;
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+    }
+    
+    button {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    button:hover:after {
+      left: 100%;
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(-1px);
+    }
+    
+    button:disabled {
+      background: #cbd5e0;
+      transform: none;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    
+    button:disabled:after {
+      display: none;
+    }
+    
+    #result {
+      background: #f8f9fa;
+      border-radius: 14px;
+      padding: 24px;
+      margin-top: 24px;
+      min-height: 150px;
+      border: 2px dashed #e2e8f0;
+      transition: all 0.3s;
+    }
+    
+    #result:hover {
+      border-color: #cbd5e0;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: #718096;
+    }
+    
+    .loading .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid #e2e8f0;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .error {
+      background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+      border: 2px solid #fc8181;
+      border-radius: 12px;
+      padding: 22px;
+      color: #c53030;
+    }
+    
+    .error strong {
+      display: block;
+      margin-bottom: 15px;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .error strong:before {
+      content: '⚠️';
+      font-size: 20px;
+    }
+    
+    .success {
+      background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+      border: 2px solid #68d391;
+      border-radius: 12px;
+      padding: 22px;
+      color: #22543d;
+      margin-bottom: 20px;
+    }
+    
+    .success strong {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+    }
+    
+    .success strong:before {
+      content: '✅';
+      font-size: 20px;
+    }
+    
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      padding: 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 24px 0;
+      resize: vertical;
+      background: white;
+      transition: all 0.3s;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    
+    .actions {
+      display: flex;
+      gap: 14px;
+      margin-top: 20px;
+    }
+    
+    .actions button {
+      padding: 16px;
+      font-size: 15px;
+    }
+    
+    .actions .copy-btn {
+      background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    }
+    
+    .actions .copy-btn:hover {
+      background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+      box-shadow: 0 10px 25px rgba(49, 130, 206, 0.4);
+    }
+    
+    .footer {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 2px solid #e2e8f0;
+      text-align: center;
+      color: #718096;
+      font-size: 13px;
+    }
+    
+    .counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #edf2f7;
+      padding: 8px 16px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    
+    .counter #count {
+      color: #667eea;
+      font-size: 18px;
+    }
+    
+    .manual-toggle {
+      background: white;
+      color: #4a5568;
+      border: 2px solid #cbd5e0;
+      margin-top: 20px;
+      font-size: 15px;
+    }
+    
+    .manual-toggle:hover {
+      background: #f7fafc;
+      border-color: #a0aec0;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .manual-panel {
+      background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+      border: 2px solid #9ae6b4;
+      border-radius: 14px;
+      padding: 24px;
+      margin-top: 20px;
+      display: none;
+      animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .manual-panel h3 {
+      color: #22543d;
+      margin-bottom: 20px;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .manual-panel h3:before {
+      content: '✏️';
+      font-size: 20px;
+    }
+    
+    .manual-panel input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 16px;
+      border: 2px solid #cbd5e0;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    
+    .manual-panel input:focus {
+      outline: none;
+      border-color: #38b2ac;
+      box-shadow: 0 0 0 3px rgba(56, 178, 172, 0.1);
+    }
+    
+    .manual-panel input::placeholder {
+      color: #a0aec0;
+    }
+    
+    .manual-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .manual-buttons button {
+      padding: 14px;
+    }
+    
+    #saveManual {
+      background: linear-gradient(135deg, #38b2ac 0%, #319795 100%);
+    }
+    
+    #saveManual:hover {
+      background: linear-gradient(135deg, #319795 0%, #2c7a7b 100%);
+      box-shadow: 0 10px 25px rgba(56, 178, 172, 0.4);
+    }
+    
+    #cancelManual {
+      background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+    }
+    
+    #cancelManual:hover {
+      background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+      box-shadow: 0 10px 25px rgba(113, 128, 150, 0.4);
+    }
+    
+    .upgrade-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #10b981;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 8px;
+      padding: 10px 20px;
+      background: #f0fff4;
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+    
+    .upgrade-link:hover {
+      background: #c6f6d5;
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+    
+    .upgrade-link:before {
+      content: '✨';
+      font-size: 18px;
+    }
+    
+    /* PDF-specific styles */
+    .pdf-form input[required] {
+      border-left: 4px solid #e53e3e;
+    }
+    
+    .pdf-form label[for*="pdf"]:has(+ input[required]):after {
+      content: ' *';
+      color: #e53e3e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><span class="logo">📚</span> SmartCite</h1>
+      <p>Generate perfect citations from webpages, PDFs, articles, and videos</p>
+    </div>
+    
+    <div class="permission-note">
+      <strong>Privacy First Design</strong>
+      SmartCite requests permission only when needed. You control which sites we can access. No data is stored or tracked.
+    </div>
+    
+    <div class="features">
+      <h3>SmartCite Features</h3>
+      <ul>
+        <li>Works on any webpage, PDF, article, or video</li>
+        <li>10+ citation styles (APA, MLA, Chicago, IEEE, etc.)</li>
+        <li>Automatic metadata detection from pages</li>
+        <li>PDF form with required fields for accurate citations</li>
+        <li>Manual editing for corrections and adjustments</li>
+        <li>Copy to clipboard with one click</li>
+        <li>Free for up to 10 citations daily</li>
+      </ul>
+    </div>
+    
+    <div class="citation-form">
+      <label for="formatSelect">Select Citation Style:</label>
+      <select id="formatSelect">
+        <option value="apa">APA Style (American Psychological Association)</option>
+        <option value="mla">MLA Style (Modern Language Association)</option>
+        <option value="chicago">Chicago Manual of Style</option>
+        <option value="ieee">IEEE Style</option>
+        <option value="harvard">Harvard Referencing Style</option>
+        <option value="vancouver">Vancouver Style</option>
+        <option value="ama">AMA Style (American Medical Association)</option>
+      </select>
+      
+      <button id="citeButton">
+        <span>🔍</span>
+        <span>Generate Citation</span>
+      </button>
+    </div>
+    
+    <div id="result">
+      <div class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Analyzing page content...</p>
+      </div>
+      <!-- Results will appear here -->
+    </div>
+    
+    <button id="toggleManualEdit" class="manual-toggle">
+      <span>✏️</span>
+      <span>Edit Details Manually</span>
+    </button>
+    
+    <div id="manualEditPanel" class="manual-panel">
+      <h3>Manual Citation Details</h3>
+      <input type="text" id="editTitle" placeholder="Title (required)">
+      <input type="text" id="editAuthors" placeholder="Authors (separate with commas)">
+      <input type="text" id="editYear" placeholder="Publication Year">
+      <input type="text" id="editJournal" placeholder="Journal/Website/Channel">
+      <div class="manual-buttons">
+        <button id="saveManual">Use These Details</button>
+        <button id="cancelManual">Cancel</button>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <div class="counter">
+        <span>Citations Today:</span>
+        <span id="count">0</span>
+        <span>/10</span>
+      </div>
+      <div>
+        <a href="#" id="upgradeLink" class="upgrade-link">
+          <span>Upgrade to Premium</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
