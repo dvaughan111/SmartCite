@@ -1,26 +1,36 @@
 {
   "manifest_version": 3,
   "name": "SmartCite - Academic Citation Generator",
-  "version": "1.2.0",
-  "version_name": "1.2.0 stable",
-  "description": "One-click citations from any webpage, article, or video. Never struggle with broken citation tools again.",
+  "version": "2.0.0",
+  "version_name": "2.0.0 production",
+  "description": "One-click citations from webpages, PDFs, and videos. Supports APA, MLA, Chicago, and more citation styles.",
+  
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
+  
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Generate Citation"
+    "default_title": "Generate Citation",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
+  
   "permissions": [
     "activeTab",
     "storage",
     "scripting"
   ],
+  
   "optional_host_permissions": [
     "*://*/*"
   ],
+  
   "host_permissions": [
     "https://doi.org/*",
     "https://api.crossref.org/*"
