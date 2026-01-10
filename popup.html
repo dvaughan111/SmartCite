@@ -3,159 +3,409 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartCite</title>
+  <title>SmartCite - Citation Generator</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
     }
     
     body {
-      width: 350px;
-      min-height: 200px;
+      width: 420px;
       padding: 20px;
-      background: #ffffff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
     }
     
     .header {
-      margin-bottom: 15px;
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #f0f2f5;
     }
     
     .header h1 {
-      font-size: 18px;
-      color: #2563EB;
-      margin-bottom: 5px;
+      font-size: 24px;
+      color: #2d3748;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .header h1 .logo {
+      color: #667eea;
+      font-size: 28px;
     }
     
     .header p {
+      color: #718096;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .permission-note {
+      background: #e6fffa;
+      border: 2px solid #81e6d9;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 20px;
       font-size: 13px;
-      color: #6B7280;
+      color: #234e52;
+    }
+    
+    .permission-note strong {
+      color: #285e61;
+      display: block;
+      margin-bottom: 6px;
+    }
+    
+    .features {
+      background: #f7fafc;
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+    
+    .features h3 {
+      color: #4a5568;
+      margin-bottom: 12px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .features ul {
+      list-style: none;
+    }
+    
+    .features li {
+      padding: 8px 0;
+      color: #718096;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+    
+    .features li:before {
+      content: "✓";
+      color: #48bb78;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    .citation-form {
+      margin-bottom: 24px;
+    }
+    
+    .citation-form label {
+      display: block;
+      color: #4a5568;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
     }
     
     select {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
-      border: 1px solid #D1D5DB;
-      border-radius: 6px;
-      font-size: 14px;
+      padding: 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 15px;
       background: white;
+      color: #2d3748;
+      margin-bottom: 20px;
+      transition: all 0.2s;
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
     
     button {
       width: 100%;
-      padding: 12px;
-      background: #10B981;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
-      border-radius: 6px;
-      font-size: 15px;
+      border-radius: 10px;
+      font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
-      margin-bottom: 15px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
     
     button:hover {
-      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
     }
     
     button:disabled {
-      background: #9CA3AF;
+      background: #cbd5e0;
+      transform: none;
+      box-shadow: none;
       cursor: not-allowed;
     }
     
     #result {
-      padding: 15px;
-      background: #F9FAFB;
-      border-radius: 8px;
-      border: 1px solid #E5E7EB;
-      min-height: 60px;
-      font-size: 13px;
-      line-height: 1.5;
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      min-height: 100px;
+      border: 2px dashed #e2e8f0;
     }
     
     .loading {
-      color: #6B7280;
-      font-style: italic;
+      text-align: center;
+      padding: 30px;
+      color: #718096;
+    }
+    
+    .loading .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e2e8f0;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
     
     .error {
-      color: #DC2626;
+      background: #fed7d7;
+      border: 2px solid #fc8181;
+      border-radius: 10px;
+      padding: 18px;
+      color: #c53030;
+    }
+    
+    .error strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
     }
     
     .success {
-      color: #059669;
-      font-weight: 600;
-      margin-bottom: 10px;
+      background: #c6f6d5;
+      border: 2px solid #68d391;
+      border-radius: 10px;
+      padding: 18px;
+      color: #22543d;
+      margin-bottom: 15px;
     }
     
     textarea {
       width: 100%;
-      height: 80px;
-      padding: 10px;
-      border: 1px solid #D1D5DB;
-      border-radius: 6px;
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
-      margin: 10px 0;
+      min-height: 140px;
+      padding: 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-family: 'Georgia', serif;
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 20px 0;
       resize: vertical;
+      background: white;
     }
     
-    .copy-btn {
-      background: #3B82F6;
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 15px;
+    }
+    
+    .actions button {
+      padding: 12px;
       font-size: 14px;
-      padding: 8px;
     }
     
-    .copy-btn:hover {
-      background: #2563EB;
+    .actions .copy-btn {
+      background: #38b2ac;
+    }
+    
+    .actions .copy-btn:hover {
+      background: #319795;
     }
     
     .footer {
-      margin-top: 15px;
-      padding-top: 10px;
-      border-top: 1px solid #E5E7EB;
-      font-size: 12px;
-      color: #6B7280;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 2px solid #e2e8f0;
       text-align: center;
+      color: #718096;
+      font-size: 13px;
     }
     
-    .upgrade-link {
-      color: #10B981;
-      text-decoration: none;
-      font-weight: 600;
+    .manual-toggle {
+      background: #edf2f7;
+      color: #4a5568;
+      border: 2px solid #cbd5e0;
+      margin-top: 15px;
     }
     
-    .upgrade-link:hover {
-      text-decoration: underline;
+    .manual-toggle:hover {
+      background: #e2e8f0;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .manual-panel {
+      background: #f0fff4;
+      border: 2px solid #9ae6b4;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 15px;
+      display: none;
+    }
+    
+    .manual-panel h3 {
+      color: #22543d;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    
+    .manual-panel input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 2px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    .manual-panel input:focus {
+      outline: none;
+      border-color: #38b2ac;
+    }
+    
+    .manual-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .manual-buttons button {
+      flex: 1;
+      padding: 12px;
+    }
+    
+    #saveManual {
+      background: #38b2ac;
+    }
+    
+    #saveManual:hover {
+      background: #319795;
+    }
+    
+    #cancelManual {
+      background: #a0aec0;
+    }
+    
+    #cancelManual:hover {
+      background: #718096;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>SmartCite</h1>
-    <p>Generate citations from any webpage</p>
-  </div>
-  
-  <select id="formatSelect">
-    <option value="apa">APA Style</option>
-    <option value="mla">MLA Style</option>
-    <option value="chicago">Chicago Style</option>
-  </select>
-  
-  <button id="citeButton">📚 Generate Citation</button>
-  
-  <div id="result">
-    <!-- Results will appear here -->
-  </div>
-  
-  <div class="footer">
-    <div>Free uses today: <span id="count">0</span>/5</div>
-    <div style="margin-top: 5px;">
-      <a href="#" id="upgradeLink" class="upgrade-link">✨ Upgrade to Premium</a>
+  <div class="container">
+    <div class="header">
+      <h1><span class="logo">📚</span> SmartCite</h1>
+      <p>Generate perfect citations from any webpage, article, or video</p>
+    </div>
+    
+    <div class="permission-note">
+      <strong>🔒 Privacy First</strong>
+      SmartCite requests permission only when needed. You control which sites we can access. No data is stored on our servers.
+    </div>
+    
+    <div class="features">
+      <h3>✅ Key Features</h3>
+      <ul>
+        <li>Works on any webpage, article, or video</li>
+        <li>10+ citation styles (APA, MLA, Chicago, IEEE, etc.)</li>
+        <li>Automatic metadata detection</li>
+        <li>Manual editing for corrections</li>
+        <li>Copy to clipboard with one click</li>
+        <li>Free for up to 10 citations daily</li>
+      </ul>
+    </div>
+    
+    <div class="citation-form">
+      <label for="formatSelect">Citation Style:</label>
+      <select id="formatSelect">
+        <option value="apa">APA Style (American Psychological Association)</option>
+        <option value="mla">MLA Style (Modern Language Association)</option>
+        <option value="chicago">Chicago Manual of Style</option>
+        <option value="ieee">IEEE Style</option>
+        <option value="harvard">Harvard Referencing Style</option>
+        <option value="vancouver">Vancouver Style</option>
+        <option value="ama">AMA Style (American Medical Association)</option>
+      </select>
+      
+      <button id="citeButton">
+        <span>🔍</span>
+        <span>Generate Citation</span>
+      </button>
+    </div>
+    
+    <div id="result">
+      <div class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Analyzing page content...</p>
+      </div>
+    </div>
+    
+    <button id="toggleManualEdit" class="manual-toggle">
+      <span>✏️</span>
+      <span>Edit Details Manually</span>
+    </button>
+    
+    <div id="manualEditPanel" class="manual-panel">
+      <h3>Manual Citation Details</h3>
+      <input type="text" id="editTitle" placeholder="Title (required)">
+      <input type="text" id="editAuthors" placeholder="Authors (separate with commas)">
+      <input type="text" id="editYear" placeholder="Publication Year">
+      <input type="text" id="editJournal" placeholder="Journal/Website/Channel">
+      <div class="manual-buttons">
+        <button id="saveManual">Use These Details</button>
+        <button id="cancelManual">Cancel</button>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <div style="margin-bottom: 8px;">
+        <strong>Citations Today:</strong> <span id="count">0</span>/10
+      </div>
+      <div>
+        Need more? <a href="#" id="upgradeLink" style="color: #667eea; text-decoration: none; font-weight: 600;">Upgrade to Premium</a>
+      </div>
     </div>
   </div>
 
