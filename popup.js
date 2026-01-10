@@ -367,21 +367,53 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
-  function showErrorMessage(message) {
-    resultDiv.innerHTML = `
-      <div class="error">
-        <strong>❌ ${message}</strong>
-        <div style="margin-top: 15px; font-size: 14px;">
-          <strong>Try this:</strong>
-          <div style="margin-top: 10px; padding: 10px; background: #fff5f5; border-radius: 6px;">
-            1. Refresh the page you want to cite<br>
-            2. Click the SmartCite icon again<br>
-            3. Use "Edit Details Manually" below
-          </div>
+  function showErrorMessage(message, url) {
+  // Check if it's a PDF URL
+  const isPDF = url && (
+    url.toLowerCase().endsWith('.pdf') ||
+    url.includes('/pdf') ||
+    url.includes('application/pdf') ||
+    url.includes('.pdf?') ||
+    url.includes('contentType=pdf')
+  );
+  
+  let specificGuidance = '';
+  if (isPDF) {
+    specificGuidance = `
+      <div style="margin-top: 15px; padding: 15px; background: #e6fffa; border-radius: 10px; border-left: 4px solid #38b2ac;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+          <span style="font-size: 20px;">📄</span>
+          <span style="font-weight: 600; color: #234e52;">PDF File Detected</span>
+        </div>
+        <div style="font-size: 13px; color: #234e52; line-height: 1.5;">
+          <strong>Why this happens:</strong> Browsers block extensions from reading PDF files for security.<br>
+          <strong>Solution:</strong> Use the <strong>"Edit Details Manually"</strong> button below.<br>
+          <strong>Tip:</strong> Look for the title, author, and year in the PDF viewer.
         </div>
       </div>
     `;
   }
+  
+  resultDiv.innerHTML = `
+    <div class="error">
+      <strong>❌ ${message}</strong>
+      ${specificGuidance}
+      <div style="margin-top: ${isPDF ? '20px' : '15px'}; font-size: 14px;">
+        <strong>${isPDF ? 'Next Steps:' : 'Try this:'}</strong>
+        <div style="margin-top: 10px; padding: 12px; background: #fff5f5; border-radius: 8px; border: 1px solid #fed7d7;">
+          ${isPDF ? 
+            '1. Click "Edit Details Manually" below<br>' +
+            '2. Enter the PDF details (title, author, year, publisher)<br>' +
+            '3. Click "Use These Details" to generate citation' :
+            '1. Refresh the page you want to cite<br>' +
+            '2. Click the SmartCite icon again<br>' +
+            '3. Use "Edit Details Manually" below'
+          }
+        </div>
+      </div>
+    </div>
+  `;
+}
   
   // ========== MANUAL EDIT FEATURE ==========
   
