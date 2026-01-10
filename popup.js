@@ -772,4 +772,48 @@ ${citation}
       resultDiv.innerHTML = `
         <div style="text-align: center; padding: 20px;">
           <div style="font-size: 40px; color: #9f7aea; margin-bottom: 15px;">✨</div>
-          <div style="font-weight: bold; color: #553c9a; margin-bottom: 20px; font-size:
+          <div style="font-weight: bold; color: #553c9a; margin-bottom: 20px; font-size: 20px;">
+            SmartCite Premium
+          </div>
+          <div style="text-align: left; font-size: 14px; margin-bottom: 25px; line-height: 1.8;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <span style="color: #48bb78; font-size: 18px;">✓</span>
+              <span><strong>Unlimited</strong> daily citations</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <span style="color: #48bb78; font-size: 18px;">✓</span>
+              <span><strong>9,000+</strong> citation styles including all academic disciplines</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <span style="color: #48bb78; font-size: 18px;">✓</span>
+              <span><strong>AI-powered</strong> metadata detection with 99% accuracy</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <span style="color: #48bb78; font-size: 18px;">✓</span>
+              <span><strong>Export</strong> to Google Docs, Microsoft Word, and PDF</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <span style="color: #48bb78; font-size: 18px;">✓</span>
+              <span><strong>Bibliography</strong> manager with cloud sync</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="color: #48bb78; font-size: 18px;">✓</span>
+              <span><strong>Team</strong> collaboration features</span>
+            </div>
+          </div>
+          <div style="padding: 15px; background: linear-gradient(135deg, #9f7aea 0%, #553c9a 100%); 
+                border-radius: 10px; color: white;">
+            <strong>Launching Soon!</strong><br>
+            Join waitlist for early access & 50% lifetime discount
+          </div>
+        </div>
+      `;
+    });
+  }
+  
+  // ========== MAIN EVENT LISTENER ==========
+  
+  citeButton.addEventListener('click', generateCitation);
+  
+  console.log('SmartCite popup.js fully loaded with PDF support');
+});
